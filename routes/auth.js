@@ -73,8 +73,7 @@ router.post('/login', async (req, res) => {
       if (!isMatch) {
         return res.status(401).json({ message: 'Invalid credentials' });
       }
-      const data = await getUserFeatures(user.username);
-      
+    const data = await getUserFeatures(user.username);
       
     const token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
       expiresIn: '1h',
