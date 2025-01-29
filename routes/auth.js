@@ -40,14 +40,14 @@ const getUserFeatures = async (username) => {
 };
 // User Registration
 router.post('/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
 
   try {
     const salt = await bcrypt.genSalt(10); // Generate a salt
     const hashedPassword = await bcrypt.hash(password, salt); // Hash the password
 
-    const user = await User.create({ username, email, password:hashedPassword });
-  
+    const user = await User.create({ username, password:hashedPassword });
+
     // Example usage
 
     res.status(201).json({ message: 'User created successfully', user });
@@ -55,7 +55,24 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.get('/users', async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await User.findAll();
 
+    // Send the users as a JSON response
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch users',
+    });
+  }}
+)
 // User Login
 router.post('/login', async (req, res) => {
   try {
@@ -78,7 +95,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user.id, role: user.role }, SECRET_KEY, {
       expiresIn: '1h',
     });
-    res.json({ message: 'Login successful', token,feature:data });
+    res.json({ message: 'Login successful', token,feature:data,userId:user.id });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
