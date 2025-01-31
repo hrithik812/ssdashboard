@@ -11,8 +11,11 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
-
+    "start": "node index.js",
+    "build": "npm rebuild bcrypt --build-from-source"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "name": "ssrollback",
   "version": "1.0.0",
