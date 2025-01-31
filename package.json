@@ -10,8 +10,8 @@
     "sequelize-cli": "^6.6.2"
   },
 "scripts": {
-  "dev":"nodemon api/index.js",
-  "start": "node api/index.js"
+  "dev":"nodemon index.js",
+  "start": "node index.js"
 },
   "name": "ssrollback",
   "version": "1.0.0",
