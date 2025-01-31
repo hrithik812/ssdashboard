@@ -1,10 +1,16 @@
 {
-  "development": {
-    "username": "postgres",
-    "password": "123456",
+"development": {
+    "username": "neondb_owner",
+    "password": "npg_Zq0Rdfnt1yxs",
     "database": "shantasecurities",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "host": "ep-super-base-a8jat3tj-pooler.eastus2.azure.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   },
   "test": {
     "username": "root",
