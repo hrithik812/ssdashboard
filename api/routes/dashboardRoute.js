@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const {DashboardInfo,UserDashboard}=require('../models')
+const {DashboardInfo,UserDashboard}=require('../../models')
 const router = express.Router();
 
 router.post('/dashboardLink', async (req, res) => {
