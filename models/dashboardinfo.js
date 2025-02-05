@@ -18,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   DashboardInfo.init({
     name: DataTypes.STRING,
-    link: DataTypes.STRING
+    link: DataTypes.STRING,
+    priority:DataTypes.STRING
   }, {
     sequelize,
     modelName: 'DashboardInfo',
