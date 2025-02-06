@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   DashboardInfo.init({
     name: DataTypes.STRING,
     link: DataTypes.STRING,
-    priority:DataTypes.STRING
+    priority:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'DashboardInfo',

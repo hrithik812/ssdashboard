@@ -9,6 +9,11 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
+    return queryInterface.addColumn("DashboardInfos", "priority", {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: 0, // You can set a default value if needed
+    });
   },
 
   async down (queryInterface, Sequelize) {
@@ -18,5 +23,7 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+    return queryInterface.removeColumn("DashboardInfos", "priority");
+
   }
 };

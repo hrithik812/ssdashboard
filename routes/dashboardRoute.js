@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const {DashboardInfo,UserDashboard}=require('../models')
 const router = express.Router();
+const { Op } = require("sequelize");
 
 router.post('/dashboardLink', async (req, res) => {
     const { name, link } = req.body;
@@ -42,8 +43,16 @@ router.put('/dashboardLink/:id',async (req, res) => {
 router.get("/dashboardLink", async (req, res) => {
     try {
       // Fetch all records
-      const dashboardData = await DashboardInfo.findAll();
-  
+      const dashboardData = await DashboardInfo.findAll({
+        where: {
+          name: { // Replace 'name' with the actual column name
+            [Op.notIn]: ["DashBoard Info", "DashBoard Assign"]
+          }
+        },
+        order: [["priority", "ASC"]] // Order by priority in ascending order
+      });
+
+
       // Return the fetched data
       res.status(200).json(dashboardData);
     } catch (error) {
@@ -63,11 +72,13 @@ router.get('/userdashboard/:userid', async (req, res) => {
       include: [
         {
           model: DashboardInfo,
-          attributes: ['name','link'], // Only fetch the 'name' field from DashboardInfo
+          attributes: ['name','link','priority'], // Only fetch the 'name' field from DashboardInfo
         },
       ],
-    });
+      order: [[DashboardInfo, "priority", "ASC"]], // Correct order reference
 
+    });
+    
     if (!userDashboardData || userDashboardData.length === 0) {
       return res.status(404).json({ message: 'User dashboard data not found' });
     }
@@ -77,10 +88,10 @@ router.get('/userdashboard/:userid', async (req, res) => {
       id: item.id,
       userId: item.userId,
       dashboardId: item.dashboardId,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
       dashboardName: item.DashboardInfo.name, 
-      dashboardLink:item.DashboardInfo.link// Directly access 'name' from the associated DashboardInfo
+      dashboardLink:item.DashboardInfo.link,
+      priority:item.priority
+      // Directly access 'name' from the associated DashboardInfo
     }));
 
     res.status(200).json(result);
