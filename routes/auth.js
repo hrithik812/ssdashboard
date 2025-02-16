@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { User,Feature,Role } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcryptjs'); // Import bcrypt
+const authenticate = require('../middleware/authenticate');
 
 const SECRET_KEY = '123456';
 const getUserFeatures = async (username) => {
@@ -102,25 +103,49 @@ router.post('/login', async (req, res) => {
 });
 
 // Protected Route
-router.get('/profile', verifyToken, async (req, res) => {
+// router.get('/profile', verifyToken, async (req, res) => {
+//   try {
+//     const user = await User.findByPk(req.user.id);
+//     res.json(user);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+router.post("/change-password", authenticate, async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.id);
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+      const { oldPassword, newPassword } = req.body;
+
+      // Validate input
+      if (!oldPassword || !newPassword) {
+          return res.status(400).json({ message: "Both old and new passwords are required." });
+      }
+
+      // Get user from DB using the ID from JWT token
+      const user = await User.findByPk(req.user.id);
+      if (!user) {
+          return res.status(404).json({ message: "User not found." });
+      }
+
+      // Compare old password
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+          return res.status(401).json({ message: "Old password is incorrect." });
+      }
+
+      // Hash new password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      // Update password in DB
+      user.password = hashedPassword;
+      await user.save();
+
+      res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Internal server error." });
   }
 });
 
-// Middleware for JWT Verification
-function verifyToken(req, res, next) {
-  const token = req.headers['authorization'];
-  if (!token) return res.status(403).json({ message: 'No token provided' });
-
-  jwt.verify(token, SECRET_KEY, (err, decoded) => {
-    if (err) return res.status(401).json({ message: 'Unauthorized' });
-    req.user = decoded;
-    next();
-  });
-}
 
 module.exports = router;
