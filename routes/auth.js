@@ -111,9 +111,9 @@ router.post('/login', async (req, res) => {
 //     res.status(500).json({ error: err.message });
 //   }
 // });
-router.post("/change-password", authenticate, async (req, res) => {
+router.post("/change-password", async (req, res) => {
   try {
-      const { oldPassword, newPassword } = req.body;
+      const { oldPassword, newPassword ,userId} = req.body;
 
       // Validate input
       if (!oldPassword || !newPassword) {
@@ -121,7 +121,7 @@ router.post("/change-password", authenticate, async (req, res) => {
       }
 
       // Get user from DB using the ID from JWT token
-      const user = await User.findByPk(req.user.id);
+      const user = await User.findByPk(userId);
       if (!user) {
           return res.status(404).json({ message: "User not found." });
       }
